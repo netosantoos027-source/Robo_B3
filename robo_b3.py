@@ -4,18 +4,13 @@ import numpy as np
 import time
 from datetime import datetime
 import pytz
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DE E-MAIL (Preencha com seus dados)
+# CONFIGURAÇÃO DO TELEGRAM (Substitua pelos seus dados)
 # ---------------------------------------------------------------------
-CONFIG_EMAIL = {
-    "remetente": "jose.neto@cglub.com.br",     # Seu e-mail do Gmail
-    "senha_app": "Anaclaudi27@", # A senha de app de 16 letras sem espaços
-    "destinatario": "jose.neto@cglub.com.br"  # O e-mail onde você quer receber o relatório
-}
+TELEGRAM_TOKEN = "COLE_AQUI_O_TOKEN_QUE_O_BOTFATHER_TE_MANDOU"
+TELEGRAM_CHAT_ID = "COLE_AQUI_O_SEU_NUMERO_DE_ID"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -41,7 +36,6 @@ print(f"🔎 Iniciando varredura estratégica B3 às {data_hoje}...")
 
 for ticker in acoes:
     try:
-        # Sistema robusto de download com dupla tentativa em caso de oscilação de rede
         try:
             dados = yf.download(ticker, period='250d', progress=False)
         except:
@@ -72,7 +66,7 @@ for ticker in acoes:
         volume_medio = float(dados['Vol_Media_20'].iloc[-1])
         atr_atual = float(dados['ATR'].iloc[-1])
 
-        # 🚨 MUDADO PARA O TESTE DA ESTRATÉGIA (Na próxima etapa ativaremos os filtros reais)
+        # Mantido em True para o nosso teste rápido de envio
         if True:
             stop_tecnico = preco_atual - (2 * atr_atual)
             distancia_risco = preco_atual - stop_tecnico
@@ -94,53 +88,40 @@ for ticker in acoes:
     except Exception as e:
         continue
 
-# Montagem do RelatórioTexto
+# Montagem do Relatório Técnico
 df_ops = pd.DataFrame(oportunidades)
-mensagem_texto = f"🚨 RELATÓRIO IA B3 - {data_hoje} 🚨\n"
-mensagem_texto += "Modo de Teste Forçado Ativo (Enviando primeiras ações da lista)\n\n"
+mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
+mensagem_texto += "_Modo de Teste Automático via Telegram_\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! Aqui está o seu relatório de teste do robô automático:\n\n"
+    mensagem_texto += "Olá, Neto! Aqui está o seu relatório:\n\n"
     for index, row in df_ops.iterrows():
-        mensagem_texto += f"📌 Ação: {row['Ação']}\n"
-        mensagem_texto += f" • Preço de Entrada: R$ {row['Entrada']}\n"
+        mensagem_texto += f"📌 *Ação: {row['Ação']}*\n"
+        mensagem_texto += f" • Entrada sugerida: R$ {row['Entrada']}\n"
         mensagem_texto += f" • Alvo Técnico: R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
-        mensagem_texto += f" • Stop Loss Protetor: R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
-        mensagem_texto += f" • Força do Volume: {row['Vol']}x acima da média\n\n"
+        mensagem_texto += f" • Stop Loss (ATR): R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
+        mensagem_texto += f" • Volume: {row['Vol']}x acima da média\n\n"
 else:
-    mensagem_texto += "Varredura concluída.\n\nNenhuma ação encontrada nos registros."
+    mensagem_texto += "Varredura concluída. Nenhuma ação encontrada."
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO DE E-MAIL ROBUSTA (SMTP SSL PORTA 465 / 587)
+# FUNÇÃO DE ENVIO VIA TELEGRAM (Sem travar por servidores de e-mail)
 # ---------------------------------------------------------------------
-def enviar_email(conteudo):
-    msg = MIMEMultipart()
-    msg['From'] = CONFIG_EMAIL["remetente"]
-    msg['To'] = CONFIG_EMAIL["destinatario"]
-    msg['Subject'] = f"🚀 Teste do Relatório IA B3 - {data_hoje}"
-    
-    msg.attach(MIMEText(conteudo, 'plain'))
-    
+def enviar_telegram(texto):
+    url = f"https://telegram.org{TELEGRAM_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": texto,
+        "parse_mode": "Markdown"
+    }
     try:
-        # Tenta a conexão direta e blindada via SSL na Porta 465
-        print("🔗 Conectando ao servidor SMTP do Gmail via SSL (Porta 465)...")
-        server = smtplib.SMTP_SSL('://gmail.com', 465, timeout=15)
-        server.login(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["senha_app"])
-        server.sendmail(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["destinatario"], msg.as_string())
-        server.quit()
-        print("✉️ E-mail enviado com sucesso para o Neto via SSL!")
+        response = requests.post(url, json=payload, timeout=15)
+        if response.status_code == 200:
+            print("📱 Relatório enviado com sucesso para o seu Telegram!")
+        else:
+            print(f"❌ O Telegram recusou a mensagem. Erro: {response.text}")
     except Exception as e:
-        print(f"⚠️ Porta 465 falhou ({e}). Tentando rota alternativa TLS (Porta 587)...")
-        try:
-            # Rota alternativa caso a rede do GitHub bloqueie a porta padrão
-            server = smtplib.SMTP('://gmail.com', 587, timeout=15)
-            server.starttls()
-            server.login(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["senha_app"])
-            server.sendmail(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["destinatario"], msg.as_string())
-            server.quit()
-            print("✉️ E-mail enviado com sucesso para o Neto via TLS!")
-        except Exception as e_alt:
-            print(f"❌ Erro crítico total ao enviar o e-mail: {e_alt}")
+        print(f"❌ Erro ao conectar com o Telegram: {e}")
 
-enviar_email(mensagem_texto)
+enviar_telegram(mensagem_texto)
