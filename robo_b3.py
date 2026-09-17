@@ -9,12 +9,12 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DE E-MAIL (Preencha com seus dados ou use variáveis de ambiente)
+# CONFIGURAÇÃO DE E-MAIL (Preencha com seus dados)
 # ---------------------------------------------------------------------
 CONFIG_EMAIL = {
-    "remetente": "SEU_EMAIL_AQUI@gmail.com",     # Seu e-mail do Gmail
-    "senha_app": "SUA_SENHA_DE_16_LETRAS_AQUI", # A senha de app que você gerou no Passo 1
-    "destinatario": "SEU_EMAIL_AQUI@gmail.com"  # E-mail onde você quer receber o relatório
+    "remetente": "netosantoos027@gmail.com",     # Seu e-mail do Gmail
+    "senha_app": "ryrj sher ueqr awsl", # A senha de app de 16 letras sem espaços
+    "destinatario": "netosantoos027@gmail.com"  # O e-mail onde você quer receber o relatório
 }
 
 # Configura fuso horário de Brasília
@@ -49,7 +49,7 @@ for ticker in acoes:
 
         time.sleep(0.1)
 
-        # Indicadores
+        # Indicadores Técnicos
         dados['Media_20'] = dados['Close'].rolling(window=20).mean()
         dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
         dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
@@ -65,15 +65,16 @@ for ticker in acoes:
         volume_medio = float(dados['Vol_Media_20'].iloc[-1])
         atr_atual = float(dados['ATR'].iloc[-1])
 
-        # Estratégia de Rompimento Autêntico
-        if preco_atual > banda_sup_atual and volume_atual > volume_medio and preco_atual > media_200_atual:
+        # 🚨 MUDADO PARA O TESTE DA ESTRATÉGIA (Depois mudaremos de volta para a fórmula real)
+        if True:
+            # CORRIGIDO: Nome da variável 'distancia_risco' unificado em português
             stop_tecnico = preco_atual - (2 * atr_atual)
             distancia_risco = preco_atual - stop_tecnico
-            alvo_tecnico = preco_atual + (3 * distance_risco)
+            alvo_tecnico = preco_atual + (3 * distancia_risco)
             
             porcentagem_stop = ((preco_atual - stop_tecnico) / preco_atual) * 100
             porcentagem_alvo = ((alvo_tecnico - preco_atual) / preco_atual) * 100
-            score_volume = volume_atual / volume_medio
+            score_volume = volume_atual / volume_medio if volume_medio > 0 else 1.0
 
             oportunidades.append({
                 'Ação': ticker.replace('.SA', ''),
@@ -85,16 +86,17 @@ for ticker in acoes:
                 'Vol': round(score_volume, 1)
             })
     except Exception as e:
+        print(f"Erro ao processar {ticker}: {e}")
         continue
 
-# Montagem do RelatórioTexto
+# Montagem do Relatório em formato de texto limpo
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 RELATÓRIO IA B3 - {data_hoje} 🚨\n"
-mensagem_texto += "Filtros: Rompimento Bollinger + Filtro Média 200 + Stop Técnico ATR\n\n"
+mensagem_texto += "Modo de Teste Forçado Ativo (Enviando primeiras ações da lista)\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! As top 3 ações identificadas são:\n\n"
+    mensagem_texto += "Olá, Neto! Aqui está o seu relatório de teste do robô automático:\n\n"
     for index, row in df_ops.iterrows():
         mensagem_texto += f"📌 Ação: {row['Ação']}\n"
         mensagem_texto += f" • Preço de Entrada: R$ {row['Entrada']}\n"
@@ -102,7 +104,7 @@ if not df_ops.empty:
         mensagem_texto += f" • Stop Loss Protetor: R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
         mensagem_texto += f" • Força do Volume: {row['Vol']}x acima da média\n\n"
 else:
-    mensagem_texto += "Varredura concluída.\n\nO mercado está CALMO. Nenhuma ação atendeu aos critérios técnicos neste momento."
+    mensagem_texto += "Varredura concluída.\n\nNenhuma ação encontrada nos registros."
 
 # ---------------------------------------------------------------------
 # FUNÇÃO DE ENVIO DE E-MAIL (SMTP DO GMAIL)
@@ -111,18 +113,18 @@ def enviar_email(conteudo):
     msg = MIMEMultipart()
     msg['From'] = CONFIG_EMAIL["remetente"]
     msg['To'] = CONFIG_EMAIL["destinatario"]
-    msg['Subject'] = f"🚀 Relatório IA B3 - {data_hoje}"
+    msg['Subject'] = f"🚀 Teste do Relatório IA B3 - {data_hoje}"
     
     msg.attach(MIMEText(conteudo, 'plain'))
     
     try:
         server = smtplib.SMTP('://gmail.com', 587)
         server.starttls()
-        server.login(CONFIG_EMAIL["netosantoos027@gmail.com"], CONFIG_EMAIL["ryrj sher ueqr awsl"])
-        server.sendmail(CONFIG_EMAIL["netosantoos027@gmail.com"], CONFIG_EMAIL["netosantoos027@gmail.com"], msg.as_string())
+        server.login(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["senha_app"])
+        server.sendmail(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["destinatario"], msg.as_string())
         server.quit()
-        print("✉️ E-mail enviado com sucesso para o Neto!")
+        print("✉️ E-mail de teste enviado com sucesso para o Neto!")
     except Exception as e:
-        print(f"❌ Erro ao enviar e-mail: {e}")
+        print(f"❌ Erro crítico ao enviar o e-mail: {e}")
 
 enviar_email(mensagem_texto)
