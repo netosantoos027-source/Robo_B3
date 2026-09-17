@@ -12,8 +12,8 @@ from email.mime.multipart import MIMEMultipart
 # CONFIGURAÇÃO DE E-MAIL (Preencha com seus dados)
 # ---------------------------------------------------------------------
 CONFIG_EMAIL = {
-    "remetente": "netosantoos027@gmail.com",     # Seu e-mail do Gmail
-    "senha_app": "ryrj sher ueqr awsl", # A senha de app de 16 letras sem espaços
+    "remetente": "jose.neto@cglub.com.br",     # Seu e-mail do Gmail
+    "senha_app": "Anaclaudi27@", # A senha de app de 16 letras sem espaços
     "destinatario": "jose.neto@cglub.com.br"  # O e-mail onde você quer receber o relatório
 }
 
