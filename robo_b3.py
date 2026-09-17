@@ -14,7 +14,7 @@ from email.mime.multipart import MIMEMultipart
 CONFIG_EMAIL = {
     "remetente": "netosantoos027@gmail.com",     # Seu e-mail do Gmail
     "senha_app": "ryrj sher ueqr awsl", # A senha de app de 16 letras sem espaços
-    "destinatario": "netosantoos027@gmail.com"  # O e-mail onde você quer receber o relatório
+    "destinatario": "jose.neto@cglub.com.br"  # O e-mail onde você quer receber o relatório
 }
 
 # Configura fuso horário de Brasília
