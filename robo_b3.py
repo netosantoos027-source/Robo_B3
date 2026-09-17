@@ -41,8 +41,15 @@ print(f"🔎 Iniciando varredura estratégica B3 às {data_hoje}...")
 
 for ticker in acoes:
     try:
-        dados = yf.download(ticker, period='250d', progress=False)
-        if dados.empty or len(dados) < 200: continue
+        # Sistema robusto de download com dupla tentativa em caso de oscilação de rede
+        try:
+            dados = yf.download(ticker, period='250d', progress=False)
+        except:
+            time.sleep(1)
+            dados = yf.download(ticker, period='250d', progress=False)
+
+        if dados.empty or len(dados) < 200: 
+            continue
             
         if isinstance(dados.columns, pd.MultiIndex):
             dados.columns = dados.columns.get_level_values(0)
@@ -65,9 +72,8 @@ for ticker in acoes:
         volume_medio = float(dados['Vol_Media_20'].iloc[-1])
         atr_atual = float(dados['ATR'].iloc[-1])
 
-        # 🚨 MUDADO PARA O TESTE DA ESTRATÉGIA (Depois mudaremos de volta para a fórmula real)
+        # 🚨 MUDADO PARA O TESTE DA ESTRATÉGIA (Na próxima etapa ativaremos os filtros reais)
         if True:
-            # CORRIGIDO: Nome da variável 'distancia_risco' unificado em português
             stop_tecnico = preco_atual - (2 * atr_atual)
             distancia_risco = preco_atual - stop_tecnico
             alvo_tecnico = preco_atual + (3 * distancia_risco)
@@ -86,10 +92,9 @@ for ticker in acoes:
                 'Vol': round(score_volume, 1)
             })
     except Exception as e:
-        print(f"Erro ao processar {ticker}: {e}")
         continue
 
-# Montagem do Relatório em formato de texto limpo
+# Montagem do RelatórioTexto
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 RELATÓRIO IA B3 - {data_hoje} 🚨\n"
 mensagem_texto += "Modo de Teste Forçado Ativo (Enviando primeiras ações da lista)\n\n"
@@ -107,7 +112,7 @@ else:
     mensagem_texto += "Varredura concluída.\n\nNenhuma ação encontrada nos registros."
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO DE E-MAIL (SMTP DO GMAIL)
+# FUNÇÃO DE ENVIO DE E-MAIL ROBUSTA (SMTP SSL PORTA 465 / 587)
 # ---------------------------------------------------------------------
 def enviar_email(conteudo):
     msg = MIMEMultipart()
@@ -118,13 +123,24 @@ def enviar_email(conteudo):
     msg.attach(MIMEText(conteudo, 'plain'))
     
     try:
-        server = smtplib.SMTP('://gmail.com', 587)
-        server.starttls()
+        # Tenta a conexão direta e blindada via SSL na Porta 465
+        print("🔗 Conectando ao servidor SMTP do Gmail via SSL (Porta 465)...")
+        server = smtplib.SMTP_SSL('://gmail.com', 465, timeout=15)
         server.login(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["senha_app"])
         server.sendmail(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["destinatario"], msg.as_string())
         server.quit()
-        print("✉️ E-mail de teste enviado com sucesso para o Neto!")
+        print("✉️ E-mail enviado com sucesso para o Neto via SSL!")
     except Exception as e:
-        print(f"❌ Erro crítico ao enviar o e-mail: {e}")
+        print(f"⚠️ Porta 465 falhou ({e}). Tentando rota alternativa TLS (Porta 587)...")
+        try:
+            # Rota alternativa caso a rede do GitHub bloqueie a porta padrão
+            server = smtplib.SMTP('://gmail.com', 587, timeout=15)
+            server.starttls()
+            server.login(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["senha_app"])
+            server.sendmail(CONFIG_EMAIL["remetente"], CONFIG_EMAIL["destinatario"], msg.as_string())
+            server.quit()
+            print("✉️ E-mail enviado com sucesso para o Neto via TLS!")
+        except Exception as e_alt:
+            print(f"❌ Erro crítico total ao enviar o e-mail: {e_alt}")
 
 enviar_email(mensagem_texto)
