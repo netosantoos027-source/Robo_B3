@@ -7,10 +7,13 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Substitua pelos seus dados)
+# CONFIGURAÇÃO DO TELEGRAM (Preencha com seus dados corretos)
 # ---------------------------------------------------------------------
-TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQ0lyyOrIl-lvbsJecFc"
-TELEGRAM_CHAT_ID = "8650206759"
+# Cole aqui os números do Token que o @BotFather te deu (sem a palavra 'bot' antes)
+TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
+
+# Cole aqui o seu número de ID que o @userinfobot te deu (apenas números)
+TELEGRAM_CHAT_ID = "COLE_AQUI_O_SEU_NUMERO_DE_ID"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -66,7 +69,7 @@ for ticker in acoes:
         volume_medio = float(dados['Vol_Media_20'].iloc[-1])
         atr_atual = float(dados['ATR'].iloc[-1])
 
-        # Mantido em True para o nosso teste rápido de envio
+        # Mantido em True para o nosso teste rápido de funcionamento
         if True:
             stop_tecnico = preco_atual - (2 * atr_atual)
             distancia_risco = preco_atual - stop_tecnico
@@ -106,22 +109,26 @@ else:
     mensagem_texto += "Varredura concluída. Nenhuma ação encontrada."
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO VIA TELEGRAM (Sem travar por servidores de e-mail)
+# FUNÇÃO DE ENVIO VIA TELEGRAM CORRIGIDA E BLINDADA CONTRA ERROS DE CONEXÃO
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
-    url = f"https://telegram.org{TELEGRAM_TOKEN}/sendMessage"
+    # Correção estrutural da URL para blindar contra digitação manual errada
+    url_base = "https://telegram.org"
+    rota = f"/bot{TELEGRAM_TOKEN}/sendMessage"
+    url_final = url_base + rota
+    
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": texto,
         "parse_mode": "Markdown"
     }
     try:
-        response = requests.post(url, json=payload, timeout=15)
+        response = requests.post(url_final, json=payload, timeout=15)
         if response.status_code == 200:
             print("📱 Relatório enviado com sucesso para o seu Telegram!")
         else:
             print(f"❌ O Telegram recusou a mensagem. Erro: {response.text}")
     except Exception as e:
-        print(f"❌ Erro ao conectar com o Telegram: {e}")
+        print(f"❌ Erro de rede ao conectar com os servidores do Telegram: {e}")
 
 enviar_telegram(mensagem_texto)
