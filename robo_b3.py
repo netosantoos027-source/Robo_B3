@@ -7,10 +7,12 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Canal Oficial do Neto)
+# CONFIGURAÇÃO DO TELEGRAM (Link Privado do Neto Configurado)
 # ---------------------------------------------------------------------
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
-TELEGRAM_CHAT_ID = "@sinais_botb3"
+
+# Usamos a assinatura do seu link de convite privado para validar o envio seguro
+TELEGRAM_CHAT_ID = "+MCBRIkRXR7ZhMjYx"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -35,6 +37,7 @@ oportunidades = []
 print(f"⚡ Iniciando varredura estratégica real B3 às {data_hoje}...")
 
 try:
+    # Baixa todas as ações juntas para máxima velocidade
     dados_lote = yf.download(acoes, period='250d', group_by='ticker', progress=False)
     
     for ticker in acoes:
@@ -63,7 +66,7 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # Filtro matemático real ativo para o seu projeto de Swing Trade
+            # 🎯 TÉCNICA REAL ATIVADA: Preço rompe banda superior com volume acima da média em tendência de alta
             if preco_atual > banda_sup_atual and volume_atual > volume_medio and preco_atual > media_200_atual:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
@@ -87,7 +90,7 @@ try:
 except Exception as e:
     print(f"Erro no download: {e}")
 
-# Montagem do Relatório Oficial
+# Montagem do Relatório Oficial de Mercado
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
 mensagem_texto += "_Filtro Técnico: Rompimento Bollinger + Média 200 + Stop Técnico ATR_\n\n"
@@ -104,16 +107,16 @@ if not df_ops.empty:
 else:
     mensagem_texto += "Varredura diária concluída.\n\nO mercado B3 está *CALMO* agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta."
 
-# 💾 GRAVAÇÃO DE SEGURANÇA (Garante que o relatório exista no seu link do GitHub)
+# 💾 Gravação de segurança no arquivo do GitHub
 try:
     with open("Último_Relatório.txt", "w", encoding="utf-8") as f:
         f.write(mensagem_texto)
-    print("✅ Relatório gravado com sucesso no arquivo do GitHub!")
+    print("✅ Arquivo físico gerado com sucesso no GitHub!")
 except Exception as e:
     print(f"Erro ao salvar arquivo: {e}")
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO VIA TELEGRAM CORRIGIDA PARA CANAIS PÚBLICOS
+# FUNÇÃO DE ENVIO VIA TELEGRAM CORRIGIDA (LINK PRIVADO ASSINADO)
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
     url_final = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -125,10 +128,10 @@ def enviar_telegram(texto):
     try:
         response = requests.post(url_final, json=payload, timeout=15)
         if response.status_code == 200:
-            print("📱 Relatório enviado com sucesso para o Canal do Telegram!")
+            print("📱 Relatório enviado com sucesso para o seu Telegram!")
         else:
-            print(f"❌ O Telegram recusou. Resposta do servidor: {response.text}")
+            print(f"❌ Erro de resposta do Telegram: {response.text}")
     except Exception as e:
-        print(f"❌ Erro de rede ao conectar com o Telegram: {e}")
+        print(f"❌ Erro de rede: {e}")
 
 enviar_telegram(mensagem_texto)
