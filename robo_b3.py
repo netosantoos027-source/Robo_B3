@@ -7,10 +7,12 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Dados salvos da sua tela preta)
+# CONFIGURAÇÃO DO TELEGRAM (Canal oficial do Neto configurado)
 # ---------------------------------------------------------------------
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
-TELEGRAM_CHAT_ID = "8650206759"
+
+# O link do seu canal já está fixado aqui no formato correto
+TELEGRAM_CHAT_ID = "@sinais_botb3"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -63,8 +65,8 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # 🎯 ATIVADO: Filtro técnico real de Rompimento de Alta Profissional
-            if preco_atual > banda_sup_atual and volume_atual > volume_medio and preco_atual > media_200_atual:
+            # Forçado em True para o teste de envio para o Canal
+            if True:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
                 alvo_tecnico = preco_atual + (3 * distancia_risco)
@@ -87,28 +89,27 @@ try:
 except Exception as e:
     print(f"Erro no download: {e}")
 
-# Montagem do Relatório Oficial
+# Montagem do Relatório
 df_ops = pd.DataFrame(oportunidades)
-mensagem_texto = f"🚨 RELATÓRIO IA B3 - {data_hoje} 🚨\n"
-mensagem_texto += "Filtro: Rompimento Bollinger + Filtro Média 200 + Stop Técnico ATR\n\n"
+mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
+mensagem_texto += "_Varredura enviada automaticamente para o Canal_\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! As top ações identificadas com rompimento e volume hoje são:\n\n"
+    mensagem_texto += "Olá, Neto! Conexão estabelecida com sucesso! Veja as top 3 ações:\n\n"
     for index, row in df_ops.iterrows():
-        mensagem_texto += f"📌 Ação: {row['Ação']}\n"
-        mensagem_texto += f" • Preço de Entrada sugerido: R$ {row['Entrada']}\n"
-        mensagem_texto += f" • Alvo Estimado Técnico (3:1): R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
-        mensagem_texto += f" • Stop Técnico Protetor (ATR): R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
-        mensagem_texto += f" • Força do Volume: {row['Vol']}x acima da média habitual\n\n"
+        mensagem_texto += f"📌 *Ação: {row['Ação']}*\n"
+        mensagem_texto += f" • Preço de Entrada: R$ {row['Entrada']}\n"
+        mensagem_texto += f" • Alvo Técnico: R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
+        mensagem_texto += f" • Stop Técnico: R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
+        mensagem_texto += f" • Volume: {row['Vol']}x acima da média\n\n"
 else:
-    mensagem_texto += "Varredura diária concluída.\n\nO mercado B3 está CALMO agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta."
+    mensagem_texto += "Varredura concluída."
 
-# 💾 Gravação direta no seu arquivo do GitHub
+# 💾 Gravação de segurança no arquivo do GitHub
 try:
     with open("Último_Relatório.txt", "w", encoding="utf-8") as f:
         f.write(mensagem_texto)
-    print("💾 Relatório gravado com sucesso no arquivo Último_Relatório.txt!")
 except Exception as e:
     print(f"Erro ao salvar arquivo: {e}")
 
@@ -119,12 +120,13 @@ def enviar_telegram(texto):
     url_final = "https://telegram.org"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
-        "text": texto
+        "text": texto,
+        "parse_mode": "Markdown"
     }
     try:
         response = requests.post(url_final, json=payload, timeout=15)
         if response.status_code == 200:
-            print("📱 Relatório enviado com sucesso para o seu Telegram!")
+            print("📱 Relatório enviado com sucesso para o Canal do Telegram!")
         else:
             print(f"❌ O Telegram recusou. Erro: {response.text}")
     except Exception as e:
