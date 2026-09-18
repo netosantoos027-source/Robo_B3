@@ -9,8 +9,8 @@ import requests
 # ---------------------------------------------------------------------
 # CONFIGURAÇÃO DO TELEGRAM (Substitua pelos seus dados)
 # ---------------------------------------------------------------------
-TELEGRAM_TOKEN = "COLE_AQUI_O_TOKEN_QUE_O_BOTFATHER_TE_MANDOU"
-TELEGRAM_CHAT_ID = "COLE_AQUI_O_SEU_NUMERO_DE_ID"
+TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQ0lyyOrIl-lvbsJecFc"
+TELEGRAM_CHAT_ID = "8650206759"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
