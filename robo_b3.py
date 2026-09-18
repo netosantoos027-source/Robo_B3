@@ -7,9 +7,8 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Preencha apenas o seu ID na linha 14)
+# CONFIGURAÇÃO DO TELEGRAM (Insira o seu ID na linha 14)
 # ---------------------------------------------------------------------
-# Seu Token já está memorizado e fixado de forma segura no final do código.
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
 
 # COLOQUE AQUI O SEU NÚMERO DE ID QUE O @userinfobot TE DEU (APENAS NÚMEROS)
@@ -35,10 +34,9 @@ acoes = [
 ]
 
 oportunidades = []
-print(f"⚡ Iniciando varredura em lote ultra rápida às {data_hoje}...")
+print(f"⚡ Iniciando varredura rápida às {data_hoje}...")
 
 try:
-    # Baixa todas as ações juntas para evitar travamentos de rede
     dados_lote = yf.download(acoes, period='250d', group_by='ticker', progress=False)
     
     for ticker in acoes:
@@ -51,7 +49,7 @@ try:
             if dados.empty or len(dados) < 200: 
                 continue
 
-            # Indicadores Técnicos (Bollinger, Média 200 e ATR)
+            # Indicadores Técnicos
             dados['Media_20'] = dados['Close'].rolling(window=20).mean()
             dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
             dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
@@ -67,7 +65,7 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # Modo de Teste Ativo (Envia dados de qualquer forma para validar a conexão)
+            # Forçado em True apenas para validar que a mensagem chega no seu chat
             if True:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
@@ -89,32 +87,30 @@ try:
         except:
             continue
 except Exception as e:
-    print(f"Erro no download em lote: {e}")
+    print(f"Erro no download: {e}")
 
-# Montagem do Relatório Técnico para o Telegram
+# Montagem do Relatório
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
-mensagem_texto += "_Varredura Otimizada via Telegram_\n\n"
+mensagem_texto += "_Teste de conexão direta via Telegram_\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! Aqui está o seu relatório de teste rápido:\n\n"
+    mensagem_texto += "Olá, Neto! Conexão estabelecida com sucesso! Veja o teste:\n\n"
     for index, row in df_ops.iterrows():
         mensagem_texto += f"📌 *Ação: {row['Ação']}*\n"
-        mensagem_texto += f" • Entrada sugerida: R$ {row['Entrada']}\n"
+        mensagem_texto += f" • Preço de Entrada: R$ {row['Entrada']}\n"
         mensagem_texto += f" • Alvo Técnico: R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
-        mensagem_texto += f" • Stop Loss (ATR): R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
+        mensagem_texto += f" • Stop Técnico: R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
         mensagem_texto += f" • Volume: {row['Vol']}x acima da média\n\n"
 else:
-    mensagem_texto += "Varredura concluída. Nenhuma ação encontrada."
+    mensagem_texto += "Varredura concluída."
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO VIA TELEGRAM TOTALMENTE FIXA (BLINDADA CONTRA ERROS)
+# FUNÇÃO DE ENVIO VIA TELEGRAM FIXA
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
-    # URL 100% estática para evitar que erros de edição quebrem o endereço do servidor
     url_final = "https://telegram.org"
-    
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": texto,
@@ -125,8 +121,8 @@ def enviar_telegram(texto):
         if response.status_code == 200:
             print("📱 Relatório enviado com sucesso para o seu Telegram!")
         else:
-            print(f"❌ Erro de resposta do Telegram: {response.text}")
+            print(f"❌ O Telegram recusou. Erro: {response.text}")
     except Exception as e:
-        print(f"❌ Erro de rede físico ao tentar conectar: {e}")
+        print(f"❌ Erro de rede: {e}")
 
 enviar_telegram(mensagem_texto)
