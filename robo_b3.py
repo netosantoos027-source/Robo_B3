@@ -13,7 +13,7 @@ import requests
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
 
 # Cole aqui o seu número de ID que o @userinfobot te deu (apenas números)
-TELEGRAM_CHAT_ID = "COLE_AQUI_O_SEU_NUMERO_DE_ID"
+TELEGRAM_CHAT_ID = "8650206759"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
