@@ -49,8 +49,8 @@ try:
 
             # Indicadores Técnicos
             dados['Media_20'] = dados['Close'].rolling(window=20).mean()
-            dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
-            dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
+            dados['Desvim_20'] = dados['Close'].rolling(window=20).std()
+            dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvim_20'] * 2)
             dados['Vol_Media_20'] = dados['Volume'].rolling(window=20).mean()
             dados['Media_200'] = dados['Close'].rolling(window=200).mean()
             dados['High_Low'] = dados['High'] - dados['Low']
@@ -63,8 +63,8 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # Mantido True para forçar os dados no relatório de teste
-            if True:
+            # 🎯 ATIVADO: Filtro técnico real de Rompimento de Alta Profissional
+            if preco_atual > banda_sup_atual and volume_atual > volume_medio and preco_atual > media_200_atual:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
                 alvo_tecnico = preco_atual + (3 * distancia_risco)
@@ -87,24 +87,24 @@ try:
 except Exception as e:
     print(f"Erro no download: {e}")
 
-# Montagem do Relatório
+# Montagem do Relatório Oficial
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 RELATÓRIO IA B3 - {data_hoje} 🚨\n"
-mensagem_texto += "Sistema de Varredura em Lote Ativo\n\n"
+mensagem_texto += "Filtro: Rompimento Bollinger + Filtro Média 200 + Stop Técnico ATR\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! Veja as top 3 ações do teste de conexão:\n\n"
+    mensagem_texto += "Olá, Neto! As top ações identificadas com rompimento e volume hoje são:\n\n"
     for index, row in df_ops.iterrows():
         mensagem_texto += f"📌 Ação: {row['Ação']}\n"
-        mensagem_texto += f" • Preço de Entrada: R$ {row['Entrada']}\n"
-        mensagem_texto += f" • Alvo Técnico: R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
-        mensagem_texto += f" • Stop Técnico: R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
-        mensagem_texto += f" • Volume: {row['Vol']}x acima da média\n\n"
+        mensagem_texto += f" • Preço de Entrada sugerido: R$ {row['Entrada']}\n"
+        mensagem_texto += f" • Alvo Estimado Técnico (3:1): R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
+        mensagem_texto += f" • Stop Técnico Protetor (ATR): R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
+        mensagem_texto += f" • Força do Volume: {row['Vol']}x acima da média habitual\n\n"
 else:
-    mensagem_texto += "Varredura concluída."
+    mensagem_texto += "Varredura diária concluída.\n\nO mercado B3 está CALMO agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta."
 
-# 💾 SALVA O RELATÓRIO EM ARQUIVO FÍSICO NO GITHUB (Garantia extra caso seu Telegram mude de ID)
+# 💾 Gravação direta no seu arquivo do GitHub
 try:
     with open("Último_Relatório.txt", "w", encoding="utf-8") as f:
         f.write(mensagem_texto)
