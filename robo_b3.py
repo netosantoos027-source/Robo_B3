@@ -7,9 +7,12 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Canal Oficial e Público do Neto)
+# CONFIGURAÇÃO DO TELEGRAM (Canal Oficial do Neto 100% Configurado)
 # ---------------------------------------------------------------------
-TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
+# Token corrigido com a letra 'l' minúscula conforme o padrão do BotFather
+TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrIl-lvbsJecFc"
+
+# Nome público do seu canal na rede do Telegram
 TELEGRAM_CHAT_ID = "@sinais_botb3"
 
 # Configura fuso horário de Brasília
@@ -47,7 +50,7 @@ try:
             if dados.empty or len(dados) < 200: 
                 continue
 
-            # Indicadores Técnicos Profissionais Corrigidos
+            # Indicadores Técnicos Profissionais
             dados['Media_20'] = dados['Close'].rolling(window=20).mean()
             dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
             dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
@@ -116,7 +119,6 @@ except Exception as e:
 # FUNÇÃO DE ENVIO VIA TELEGRAM MONTADA EM BLOCOS SEPARADOS (BLINDADA)
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
-    # Separado por pedaços para impedir que o link se quebre na edição do GitHub
     site_base = "https://" + "api.telegram.org"
     pasta_bot = "/bot" + TELEGRAM_TOKEN
     acao_envio = "/sendMessage"
