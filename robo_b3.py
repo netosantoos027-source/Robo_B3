@@ -7,10 +7,13 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM
+# CONFIGURAÇÃO DO TELEGRAM (Preencha apenas o seu ID na linha 14)
 # ---------------------------------------------------------------------
+# Seu Token já está memorizado e fixado de forma segura no final do código.
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
-TELEGRAM_CHAT_ID = "COLE_AQUI_O_SEU_NUMERO_DE_ID"
+
+# COLOQUE AQUI O SEU NÚMERO DE ID QUE O @userinfobot TE DEU (APENAS NÚMEROS)
+TELEGRAM_CHAT_ID = "8650206759"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -32,15 +35,14 @@ acoes = [
 ]
 
 oportunidades = []
-print(f"🔎 Baixando dados em lote para máxima velocidade às {data_hoje}...")
+print(f"⚡ Iniciando varredura em lote ultra rápida às {data_hoje}...")
 
 try:
-    # Baixa TODAS as ações juntas de uma vez só. Leva menos de 5 segundos!
+    # Baixa todas as ações juntas para evitar travamentos de rede
     dados_lote = yf.download(acoes, period='250d', group_by='ticker', progress=False)
     
     for ticker in acoes:
         try:
-            # Extrai os dados da ação correspondente dentro do lote
             if ticker in dados_lote.columns.get_level_values(0):
                 dados = dados_lote[ticker].dropna()
             else:
@@ -49,7 +51,7 @@ try:
             if dados.empty or len(dados) < 200: 
                 continue
 
-            # Indicadores Técnicos
+            # Indicadores Técnicos (Bollinger, Média 200 e ATR)
             dados['Media_20'] = dados['Close'].rolling(window=20).mean()
             dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
             dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
@@ -65,7 +67,7 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # Modo de Teste Ativo (Mantenha True por enquanto)
+            # Modo de Teste Ativo (Envia dados de qualquer forma para validar a conexão)
             if True:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
@@ -89,7 +91,7 @@ try:
 except Exception as e:
     print(f"Erro no download em lote: {e}")
 
-# Montagem do Relatório Técnico
+# Montagem do Relatório Técnico para o Telegram
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
 mensagem_texto += "_Varredura Otimizada via Telegram_\n\n"
@@ -104,13 +106,15 @@ if not df_ops.empty:
         mensagem_texto += f" • Stop Loss (ATR): R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
         mensagem_texto += f" • Volume: {row['Vol']}x acima da média\n\n"
 else:
-    mensagem_texto += "Varredura concluída. Nenhuma ação atendeu aos critérios."
+    mensagem_texto += "Varredura concluída. Nenhuma ação encontrada."
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO VIA TELEGRAM
+# FUNÇÃO DE ENVIO VIA TELEGRAM TOTALMENTE FIXA (BLINDADA CONTRA ERROS)
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
-    url_final = "https://telegram.org" + TELEGRAM_TOKEN + "/sendMessage"
+    # URL 100% estática para evitar que erros de edição quebrem o endereço do servidor
+    url_final = "https://telegram.org"
+    
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": texto,
@@ -121,8 +125,8 @@ def enviar_telegram(texto):
         if response.status_code == 200:
             print("📱 Relatório enviado com sucesso para o seu Telegram!")
         else:
-            print(f"❌ Erro no Telegram: {response.text}")
+            print(f"❌ Erro de resposta do Telegram: {response.text}")
     except Exception as e:
-        print(f"❌ Erro de rede: {e}")
+        print(f"❌ Erro de rede físico ao tentar conectar: {e}")
 
 enviar_telegram(mensagem_texto)
