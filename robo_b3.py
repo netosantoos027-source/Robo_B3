@@ -10,8 +10,6 @@ import requests
 # CONFIGURAÇÃO DO TELEGRAM (Canal Oficial e Público do Neto)
 # ---------------------------------------------------------------------
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
-
-# Nome público oficial do seu canal na rede do Telegram
 TELEGRAM_CHAT_ID = "@sinais_botb3"
 
 # Configura fuso horário de Brasília
@@ -37,7 +35,6 @@ oportunidades = []
 print(f"⚡ Iniciando varredura estratégica real B3 às {data_hoje}...")
 
 try:
-    # Baixa todas as ações juntas em bloco para máxima velocidade de processamento
     dados_lote = yf.download(acoes, period='250d', group_by='ticker', progress=False)
     
     for ticker in acoes:
@@ -50,10 +47,10 @@ try:
             if dados.empty or len(dados) < 200: 
                 continue
 
-            # Indicadores Técnicos Profissionais
+            # Indicadores Técnicos Profissionais Corrigidos
             dados['Media_20'] = dados['Close'].rolling(window=20).mean()
-            dados['Desvim_20'] = dados['Close'].rolling(window=20).std()
-            dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvim_20'] * 2)
+            dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
+            dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
             dados['Vol_Media_20'] = dados['Volume'].rolling(window=20).mean()
             dados['Media_200'] = dados['Close'].rolling(window=200).mean()
             dados['High_Low'] = dados['High'] - dados['Low']
@@ -66,7 +63,7 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # 🎯 TÉCNICA SWING TRADE ATIVADA: Rompimento real de Bollinger com Volume e Tendência de Alta
+            # 🎯 ESTRATÉGIA REAL: Preço acima da banda superior, volume acima da média e tendência de alta de longo prazo
             if preco_atual > banda_sup_atual and volume_atual > volume_medio and preco_atual > media_200_atual:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
@@ -107,7 +104,7 @@ if not df_ops.empty:
 else:
     mensagem_texto += "Varredura diária concluída.\n\nO mercado B3 está *CALMO* agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta."
 
-# 💾 Gravação física de segurança no arquivo do GitHub (Onde você também pode ler)
+# 💾 Gravação física de segurança no arquivo do GitHub
 try:
     with open("Último_Relatório.txt", "w", encoding="utf-8") as f:
         f.write(mensagem_texto)
@@ -116,10 +113,16 @@ except Exception as e:
     print(f"Erro ao salvar arquivo: {e}")
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO VIA TELEGRAM FIXA (DIRETA PARA O CANAL)
+# FUNÇÃO DE ENVIO VIA TELEGRAM MONTADA EM BLOCOS SEPARADOS (BLINDADA)
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
-    url_final = f"https://telegram.org{TELEGRAM_TOKEN}/sendMessage"
+    # Separado por pedaços para impedir que o link se quebre na edição do GitHub
+    site_base = "https://" + "api.telegram.org"
+    pasta_bot = "/bot" + TELEGRAM_TOKEN
+    acao_envio = "/sendMessage"
+    
+    url_final = site_base + pasta_bot + acao_envio
+    
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": texto,
