@@ -7,11 +7,9 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Insira o seu ID na linha 14)
+# CONFIGURAÇÃO DO TELEGRAM (Já preenchida de forma definitiva para o Neto)
 # ---------------------------------------------------------------------
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
-
-# COLOQUE AQUI O SEU NÚMERO DE ID QUE O @userinfobot TE DEU (APENAS NÚMEROS)
 TELEGRAM_CHAT_ID = "8650206759"
 
 # Configura fuso horário de Brasília
@@ -112,7 +110,7 @@ else:
 def enviar_telegram(texto):
     url_final = "https://telegram.org"
     payload = {
-        "chat_id": TELEGRAM_CHAT_ID,
+        "chat_id": "8650206759",
         "text": texto,
         "parse_mode": "Markdown"
     }
