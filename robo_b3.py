@@ -7,13 +7,10 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Preencha com seus dados corretos)
+# CONFIGURAÇÃO DO TELEGRAM
 # ---------------------------------------------------------------------
-# Cole aqui os números do Token que o @BotFather te deu (sem a palavra 'bot' antes)
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
-
-# Cole aqui o seu número de ID que o @userinfobot te deu (apenas números)
-TELEGRAM_CHAT_ID = "8650206759"
+TELEGRAM_CHAT_ID = "COLE_AQUI_O_SEU_NUMERO_DE_ID"
 
 # Configura fuso horário de Brasília
 fuso_br = pytz.timezone('America/Sao_Paulo')
@@ -35,70 +32,71 @@ acoes = [
 ]
 
 oportunidades = []
-print(f"🔎 Iniciando varredura estratégica B3 às {data_hoje}...")
+print(f"🔎 Baixando dados em lote para máxima velocidade às {data_hoje}...")
 
-for ticker in acoes:
-    try:
+try:
+    # Baixa TODAS as ações juntas de uma vez só. Leva menos de 5 segundos!
+    dados_lote = yf.download(acoes, period='250d', group_by='ticker', progress=False)
+    
+    for ticker in acoes:
         try:
-            dados = yf.download(ticker, period='250d', progress=False)
+            # Extrai os dados da ação correspondente dentro do lote
+            if ticker in dados_lote.columns.get_level_values(0):
+                dados = dados_lote[ticker].dropna()
+            else:
+                continue
+
+            if dados.empty or len(dados) < 200: 
+                continue
+
+            # Indicadores Técnicos
+            dados['Media_20'] = dados['Close'].rolling(window=20).mean()
+            dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
+            dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
+            dados['Vol_Media_20'] = dados['Volume'].rolling(window=20).mean()
+            dados['Media_200'] = dados['Close'].rolling(window=200).mean()
+            dados['High_Low'] = dados['High'] - dados['Low']
+            dados['ATR'] = dados['High_Low'].rolling(window=14).mean()
+
+            preco_atual = float(dados['Close'].iloc[-1])
+            banda_sup_atual = float(dados['Banda_Sup'].iloc[-1])
+            media_200_atual = float(dados['Media_200'].iloc[-1])
+            volume_atual = float(dados['Volume'].iloc[-1])
+            volume_medio = float(dados['Vol_Media_20'].iloc[-1])
+            atr_atual = float(dados['ATR'].iloc[-1])
+
+            # Modo de Teste Ativo (Mantenha True por enquanto)
+            if True:
+                stop_tecnico = preco_atual - (2 * atr_atual)
+                distancia_risco = preco_atual - stop_tecnico
+                alvo_tecnico = preco_atual + (3 * distancia_risco)
+                
+                porcentagem_stop = ((preco_atual - stop_tecnico) / preco_atual) * 100
+                porcentagem_alvo = ((alvo_tecnico - preco_atual) / preco_atual) * 100
+                score_volume = volume_atual / volume_medio if volume_medio > 0 else 1.0
+
+                oportunidades.append({
+                    'Ação': ticker.replace('.SA', ''),
+                    'Entrada': round(preco_atual, 2),
+                    'Alvo': round(alvo_tecnico, 2),
+                    'Alvo_Porc': round(porcentagem_alvo, 1),
+                    'Stop': round(stop_tecnico, 2),
+                    'Stop_Porc': round(porcentagem_stop, 1),
+                    'Vol': round(score_volume, 1)
+                })
         except:
-            time.sleep(1)
-            dados = yf.download(ticker, period='250d', progress=False)
-
-        if dados.empty or len(dados) < 200: 
             continue
-            
-        if isinstance(dados.columns, pd.MultiIndex):
-            dados.columns = dados.columns.get_level_values(0)
-
-        time.sleep(0.1)
-
-        # Indicadores Técnicos
-        dados['Media_20'] = dados['Close'].rolling(window=20).mean()
-        dados['Desvio_20'] = dados['Close'].rolling(window=20).std()
-        dados['Banda_Sup'] = dados['Media_20'] + (dados['Desvio_20'] * 2)
-        dados['Vol_Media_20'] = dados['Volume'].rolling(window=20).mean()
-        dados['Media_200'] = dados['Close'].rolling(window=200).mean()
-        dados['High_Low'] = dados['High'] - dados['Low']
-        dados['ATR'] = dados['High_Low'].rolling(window=14).mean()
-
-        preco_atual = float(dados['Close'].iloc[-1])
-        banda_sup_atual = float(dados['Banda_Sup'].iloc[-1])
-        media_200_atual = float(dados['Media_200'].iloc[-1])
-        volume_atual = float(dados['Volume'].iloc[-1])
-        volume_medio = float(dados['Vol_Media_20'].iloc[-1])
-        atr_atual = float(dados['ATR'].iloc[-1])
-
-        # Mantido em True para o nosso teste rápido de funcionamento
-        if True:
-            stop_tecnico = preco_atual - (2 * atr_atual)
-            distancia_risco = preco_atual - stop_tecnico
-            alvo_tecnico = preco_atual + (3 * distancia_risco)
-            
-            porcentagem_stop = ((preco_atual - stop_tecnico) / preco_atual) * 100
-            porcentagem_alvo = ((alvo_tecnico - preco_atual) / preco_atual) * 100
-            score_volume = volume_atual / volume_medio if volume_medio > 0 else 1.0
-
-            oportunidades.append({
-                'Ação': ticker.replace('.SA', ''),
-                'Entrada': round(preco_atual, 2),
-                'Alvo': round(alvo_tecnico, 2),
-                'Alvo_Porc': round(porcentagem_alvo, 1),
-                'Stop': round(stop_tecnico, 2),
-                'Stop_Porc': round(porcentagem_stop, 1),
-                'Vol': round(score_volume, 1)
-            })
-    except Exception as e:
-        continue
+except Exception as e:
+    print(f"Erro no download em lote: {e}")
 
 # Montagem do Relatório Técnico
 df_ops = pd.DataFrame(oportunidades)
 mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
-mensagem_texto += "_Modo de Teste Automático via Telegram_\n\n"
+mensagem_texto += "_Varredura Otimizada via Telegram_\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! Aqui está o seu relatório:\n\n"
+    mensagem_texto += "Olá, Neto! Aqui está o seu relatório de teste rápido:\n\n"
     for index, row in df_ops.iterrows():
         mensagem_texto += f"📌 *Ação: {row['Ação']}*\n"
         mensagem_texto += f" • Entrada sugerida: R$ {row['Entrada']}\n"
@@ -106,17 +104,13 @@ if not df_ops.empty:
         mensagem_texto += f" • Stop Loss (ATR): R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
         mensagem_texto += f" • Volume: {row['Vol']}x acima da média\n\n"
 else:
-    mensagem_texto += "Varredura concluída. Nenhuma ação encontrada."
+    mensagem_texto += "Varredura concluída. Nenhuma ação atendeu aos critérios."
 
 # ---------------------------------------------------------------------
-# FUNÇÃO DE ENVIO VIA TELEGRAM CORRIGIDA E BLINDADA CONTRA ERROS DE CONEXÃO
+# FUNÇÃO DE ENVIO VIA TELEGRAM
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
-    # Correção estrutural da URL para blindar contra digitação manual errada
-    url_base = "https://telegram.org"
-    rota = f"/bot{TELEGRAM_TOKEN}/sendMessage"
-    url_final = url_base + rota
-    
+    url_final = "https://telegram.org" + TELEGRAM_TOKEN + "/sendMessage"
     payload = {
         "chat_id": TELEGRAM_CHAT_ID,
         "text": texto,
@@ -127,8 +121,8 @@ def enviar_telegram(texto):
         if response.status_code == 200:
             print("📱 Relatório enviado com sucesso para o seu Telegram!")
         else:
-            print(f"❌ O Telegram recusou a mensagem. Erro: {response.text}")
+            print(f"❌ Erro no Telegram: {response.text}")
     except Exception as e:
-        print(f"❌ Erro de rede ao conectar com os servidores do Telegram: {e}")
+        print(f"❌ Erro de rede: {e}")
 
 enviar_telegram(mensagem_texto)
