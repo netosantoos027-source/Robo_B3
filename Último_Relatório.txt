@@ -1,23 +1,6 @@
-🚨 RELATÓRIO IA B3 - 18-09-2026 10:22 🚨
-Sistema de Varredura em Lote Ativo
+🚨 RELATÓRIO IA B3 - 18-09-2026 10:24 🚨
+Filtro: Rompimento Bollinger + Filtro Média 200 + Stop Técnico ATR
 
-Olá, Neto! Veja as top 3 ações do teste de conexão:
+Varredura diária concluída.
 
-📌 Ação: TOTS3
- • Preço de Entrada: R$ 34.24
- • Alvo Técnico: R$ 41.98 (+22.6%)
- • Stop Técnico: R$ 31.66 (-7.5%)
- • Volume: 1.5x acima da média
-
-📌 Ação: RADL3
- • Preço de Entrada: R$ 20.23
- • Alvo Técnico: R$ 24.24 (+19.8%)
- • Stop Técnico: R$ 18.89 (-6.6%)
- • Volume: 1.5x acima da média
-
-📌 Ação: PETR3
- • Preço de Entrada: R$ 53.83
- • Alvo Técnico: R$ 62.78 (+16.6%)
- • Stop Técnico: R$ 50.85 (-5.5%)
- • Volume: 1.1x acima da média
-
+O mercado B3 está CALMO agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta.
