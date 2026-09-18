@@ -7,7 +7,7 @@ import pytz
 import requests
 
 # ---------------------------------------------------------------------
-# CONFIGURAÇÃO DO TELEGRAM (Já preenchida de forma definitiva para o Neto)
+# CONFIGURAÇÃO DO TELEGRAM (Dados salvos da sua tela preta)
 # ---------------------------------------------------------------------
 TELEGRAM_TOKEN = "8977957095:AAH7t7a5pc4mjfdrQOlyyOrI1-1vbsJecFc"
 TELEGRAM_CHAT_ID = "8650206759"
@@ -63,7 +63,7 @@ try:
             volume_medio = float(dados['Vol_Media_20'].iloc[-1])
             atr_atual = float(dados['ATR'].iloc[-1])
 
-            # Forçado em True apenas para validar que a mensagem chega no seu chat
+            # Mantido True para forçar os dados no relatório de teste
             if True:
                 stop_tecnico = preco_atual - (2 * atr_atual)
                 distancia_risco = preco_atual - stop_tecnico
@@ -89,14 +89,14 @@ except Exception as e:
 
 # Montagem do Relatório
 df_ops = pd.DataFrame(oportunidades)
-mensagem_texto = f"🚨 *RELATÓRIO IA B3 - {data_hoje}* 🚨\n"
-mensagem_texto += "_Teste de conexão direta via Telegram_\n\n"
+mensagem_texto = f"🚨 RELATÓRIO IA B3 - {data_hoje} 🚨\n"
+mensagem_texto += "Sistema de Varredura em Lote Ativo\n\n"
 
 if not df_ops.empty:
     df_ops = df_ops.sort_values(by='Vol', ascending=False).head(3)
-    mensagem_texto += "Olá, Neto! Conexão estabelecida com sucesso! Veja o teste:\n\n"
+    mensagem_texto += "Olá, Neto! Veja as top 3 ações do teste de conexão:\n\n"
     for index, row in df_ops.iterrows():
-        mensagem_texto += f"📌 *Ação: {row['Ação']}*\n"
+        mensagem_texto += f"📌 Ação: {row['Ação']}\n"
         mensagem_texto += f" • Preço de Entrada: R$ {row['Entrada']}\n"
         mensagem_texto += f" • Alvo Técnico: R$ {row['Alvo']} (+{row['Alvo_Porc']}%)\n"
         mensagem_texto += f" • Stop Técnico: R$ {row['Stop']} (-{row['Stop_Porc']}%)\n"
@@ -104,15 +104,22 @@ if not df_ops.empty:
 else:
     mensagem_texto += "Varredura concluída."
 
+# 💾 SALVA O RELATÓRIO EM ARQUIVO FÍSICO NO GITHUB (Garantia extra caso seu Telegram mude de ID)
+try:
+    with open("Último_Relatório.txt", "w", encoding="utf-8") as f:
+        f.write(mensagem_texto)
+    print("💾 Relatório gravado com sucesso no arquivo Último_Relatório.txt!")
+except Exception as e:
+    print(f"Erro ao salvar arquivo: {e}")
+
 # ---------------------------------------------------------------------
 # FUNÇÃO DE ENVIO VIA TELEGRAM FIXA
 # ---------------------------------------------------------------------
 def enviar_telegram(texto):
     url_final = "https://telegram.org"
     payload = {
-        "chat_id": "8650206759",
-        "text": texto,
-        "parse_mode": "Markdown"
+        "chat_id": TELEGRAM_CHAT_ID,
+        "text": texto
     }
     try:
         response = requests.post(url_final, json=payload, timeout=15)
