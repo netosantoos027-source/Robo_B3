@@ -1,6 +1,11 @@
-🚨 *RELATÓRIO IA B3 - 21-09-2026 15:11* 🚨
+🚨 *RELATÓRIO IA B3 - 21-09-2026 19:08* 🚨
 _Filtro Técnico: Rompimento Bollinger + Média 200 + Stop Técnico ATR_
 
-Varredura diária concluída.
+Olá, Neto! As top ações identificadas com rompimento e volume hoje são:
 
-O mercado B3 está *CALMO* agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta.
+📌 *Ação: YDUQ3*
+ • Preço de Entrada sugerido: R$ 11.14
+ • Alvo Estimado Técnico (3:1): R$ 13.68 (+22.8%)
+ • Stop Técnico Protetor (ATR): R$ 10.29 (-7.6%)
+ • Força do Volume: 1.5x acima da média habitual
+
