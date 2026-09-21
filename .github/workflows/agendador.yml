@@ -2,8 +2,9 @@ name: Executar Robo B3 Diario
 
 on:
   schedule:
-    - cron: '40 14 * * 1-5' # 11:40 Brasília
-    - cron: '0 22 * * 1-5'  # 19:00 Brasília
+    - cron: '45 14 * * 1-5' # Turno 1: 11:45 no horário de Brasília (UTC 14:45)
+    - cron: '0 18 * * 1-5'  # Turno 2: 15:00 no horário de Brasília (UTC 18:00) - NOVO!
+    - cron: '0 22 * * 1-5'  # Turno 3: 19:00 no horário de Brasília (UTC 22:00)
   workflow_dispatch:
 
 # Dá permissão para o computador do GitHub salvar o arquivo de texto de volta no seu repositório
@@ -32,7 +33,7 @@ jobs:
     - name: Salvar o relatório de texto no meu perfil do GitHub
       run: |
         git config --global user.name "github-actions[bot]"
-        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --global user.email "41898282+github-actions[bot]@://github.com"
         git add Último_Relatório.txt || true
         git commit -m "Atualização automática do relatório técnico da B3" || true
         git push || true
