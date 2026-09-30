@@ -1,6 +1,23 @@
-🚨 *RELATÓRIO IA B3 - 29-09-2026 22:03* 🚨
+🚨 *RELATÓRIO IA B3 - 30-09-2026 16:37* 🚨
 _Filtro Técnico: Rompimento Bollinger + Média 200 + Stop Técnico ATR_
 
-Varredura diária concluída.
+Olá, Neto! As top ações identificadas com rompimento e volume hoje são:
 
-O mercado B3 está *CALMO* agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta.
+📌 *Ação: ITUB4*
+ • Preço de Entrada sugerido: R$ 44.5
+ • Alvo Estimado Técnico (3:1): R$ 49.78 (+11.9%)
+ • Stop Técnico Protetor (ATR): R$ 42.74 (-4.0%)
+ • Força do Volume: 1.9x acima da média habitual
+
+📌 *Ação: ITSA4*
+ • Preço de Entrada sugerido: R$ 14.68
+ • Alvo Estimado Técnico (3:1): R$ 16.33 (+11.2%)
+ • Stop Técnico Protetor (ATR): R$ 14.13 (-3.7%)
+ • Força do Volume: 1.4x acima da média habitual
+
+📌 *Ação: MGLU3*
+ • Preço de Entrada sugerido: R$ 7.35
+ • Alvo Estimado Técnico (3:1): R$ 9.62 (+30.9%)
+ • Stop Técnico Protetor (ATR): R$ 6.59 (-10.3%)
+ • Força do Volume: 1.3x acima da média habitual
+
