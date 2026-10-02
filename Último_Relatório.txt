@@ -1,23 +1,23 @@
-🚨 *RELATÓRIO IA B3 - 02-10-2026 16:30* 🚨
+🚨 *RELATÓRIO IA B3 - 02-10-2026 18:50* 🚨
 _Filtro Técnico: Rompimento Bollinger + Média 200 + Stop Técnico ATR_
 
 Olá, Neto! As top ações identificadas com rompimento e volume hoje são:
 
 📌 *Ação: DXCO3*
- • Preço de Entrada sugerido: R$ 6.12
- • Alvo Estimado Técnico (3:1): R$ 7.1 (+16.0%)
- • Stop Técnico Protetor (ATR): R$ 5.79 (-5.3%)
- • Força do Volume: 2.9x acima da média habitual
+ • Preço de Entrada sugerido: R$ 6.17
+ • Alvo Estimado Técnico (3:1): R$ 7.16 (+16.1%)
+ • Stop Técnico Protetor (ATR): R$ 5.84 (-5.4%)
+ • Força do Volume: 3.3x acima da média habitual
+
+📌 *Ação: VAMO3*
+ • Preço de Entrada sugerido: R$ 4.74
+ • Alvo Estimado Técnico (3:1): R$ 5.98 (+26.2%)
+ • Stop Técnico Protetor (ATR): R$ 4.33 (-8.7%)
+ • Força do Volume: 3.2x acima da média habitual
 
 📌 *Ação: BBDC4*
- • Preço de Entrada sugerido: R$ 19.2
- • Alvo Estimado Técnico (3:1): R$ 21.92 (+14.2%)
- • Stop Técnico Protetor (ATR): R$ 18.29 (-4.7%)
- • Força do Volume: 2.2x acima da média habitual
-
-📌 *Ação: BBDC3*
- • Preço de Entrada sugerido: R$ 16.76
- • Alvo Estimado Técnico (3:1): R$ 19.0 (+13.4%)
- • Stop Técnico Protetor (ATR): R$ 16.01 (-4.5%)
- • Força do Volume: 1.9x acima da média habitual
+ • Preço de Entrada sugerido: R$ 19.23
+ • Alvo Estimado Técnico (3:1): R$ 21.95 (+14.1%)
+ • Stop Técnico Protetor (ATR): R$ 18.32 (-4.7%)
+ • Força do Volume: 2.4x acima da média habitual
 
