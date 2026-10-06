@@ -1,6 +1,23 @@
-🚨 *RELATÓRIO IA B3 - 05-10-2026 23:03* 🚨
+🚨 *RELATÓRIO IA B3 - 06-10-2026 16:49* 🚨
 _Filtro Técnico: Rompimento Bollinger + Média 200 + Stop Técnico ATR_
 
-Varredura diária concluída.
+Olá, Neto! As top ações identificadas com rompimento e volume hoje são:
 
-O mercado B3 está *CALMO* agora. Nenhuma ação apresentou padrão técnico de rompimento com volume explosivo e tendência de alta.
+📌 *Ação: EQTL3*
+ • Preço de Entrada sugerido: R$ 48.17
+ • Alvo Estimado Técnico (3:1): R$ 54.56 (+13.3%)
+ • Stop Técnico Protetor (ATR): R$ 46.04 (-4.4%)
+ • Força do Volume: 2.2x acima da média habitual
+
+📌 *Ação: DXCO3*
+ • Preço de Entrada sugerido: R$ 6.85
+ • Alvo Estimado Técnico (3:1): R$ 7.94 (+16.0%)
+ • Stop Técnico Protetor (ATR): R$ 6.49 (-5.3%)
+ • Força do Volume: 2.2x acima da média habitual
+
+📌 *Ação: IGTI11*
+ • Preço de Entrada sugerido: R$ 31.67
+ • Alvo Estimado Técnico (3:1): R$ 37.09 (+17.1%)
+ • Stop Técnico Protetor (ATR): R$ 29.86 (-5.7%)
+ • Força do Volume: 2.0x acima da média habitual
+
