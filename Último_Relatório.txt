@@ -1,23 +1,23 @@
-🚨 *RELATÓRIO IA B3 - 07-10-2026 17:08* 🚨
+🚨 *RELATÓRIO IA B3 - 07-10-2026 19:43* 🚨
 _Filtro Técnico: Rompimento Bollinger + Média 200 + Stop Técnico ATR_
 
 Olá, Neto! As top ações identificadas com rompimento e volume hoje são:
 
 📌 *Ação: MULT3*
- • Preço de Entrada sugerido: R$ 36.8
- • Alvo Estimado Técnico (3:1): R$ 42.51 (+15.5%)
- • Stop Técnico Protetor (ATR): R$ 34.9 (-5.2%)
- • Força do Volume: 3.8x acima da média habitual
+ • Preço de Entrada sugerido: R$ 36.65
+ • Alvo Estimado Técnico (3:1): R$ 42.36 (+15.6%)
+ • Stop Técnico Protetor (ATR): R$ 34.75 (-5.2%)
+ • Força do Volume: 3.9x acima da média habitual
 
 📌 *Ação: DXCO3*
- • Preço de Entrada sugerido: R$ 7.02
- • Alvo Estimado Técnico (3:1): R$ 8.2 (+16.8%)
- • Stop Técnico Protetor (ATR): R$ 6.63 (-5.6%)
+ • Preço de Entrada sugerido: R$ 7.0
+ • Alvo Estimado Técnico (3:1): R$ 8.18 (+16.9%)
+ • Stop Técnico Protetor (ATR): R$ 6.61 (-5.6%)
  • Força do Volume: 3.3x acima da média habitual
 
-📌 *Ação: PCAR3*
- • Preço de Entrada sugerido: R$ 3.57
- • Alvo Estimado Técnico (3:1): R$ 4.9 (+37.2%)
- • Stop Técnico Protetor (ATR): R$ 3.13 (-12.4%)
+📌 *Ação: ENEV3*
+ • Preço de Entrada sugerido: R$ 30.4
+ • Alvo Estimado Técnico (3:1): R$ 35.27 (+16.0%)
+ • Stop Técnico Protetor (ATR): R$ 28.78 (-5.3%)
  • Força do Volume: 2.0x acima da média habitual
 
